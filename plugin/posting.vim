@@ -1,7 +1,7 @@
 "
-"           Posting v1.3 - Stand-alone USENET/e-mail environment
-"                         Target: GVim version 6.2
-"                         Last Change: Dec 01 2003
+"           Posting v1.4 - Stand-alone USENET/e-mail environment
+"                       Target: GVim/Vim version 6.3
+"                         Last Change: 2004 Jun 22
 " 
 "                     By Tim Allen <eden@hod.aarg.net>
 " 
@@ -25,7 +25,7 @@
 " environment should be in some strange way different to the default. If
 " it, despite this, does not (might happen when source'd from a non-Vim
 " directory) or you nevertheless should think this might not work in your
-" local environment, please take a look at the Settings folder below!
+" local environment, have a look at the Settings folder below please!
 " You'll find a variable "s:vim_doc_path" there you may use to explicitly
 " point to the directory you expect help doc's to be stored.
 "
@@ -36,31 +36,33 @@
 "     questions on how to use this script!
 "
 " Documentation {{{1
-"=========================================================================
+"
 " Usage {{{2
-"------------------------------------------------------------------------
+"========================================================================
 "					      *posting-manual*
 "
 " 1.  Object			  |posting-shape|
 " 2.  Usage			  |posting-commands|
 " 3.  Macros			  |posting-sections|
-" 4.  Invocation  		  |posting-invocation|
-" 5.  Window			  |posting-window|
-" 6.  Highlighting		  |posting-highlighting|
-" 7.  Signature			  |posting-sigfile|
-" 8.  Style  			  |posting-quoting_style|
-" 9.  History			  |posting-history|
-" 10. Copyright			  |posting-copyright|
-" 11. Settings			  |posting-current_settings|
+" 4.  Flowed format		  |posting-flowed_format|
+" 5.  Invocation  		  |posting-invocation|
+" 6.  Window			  |posting-window|
+" 7.  Highlighting		  |posting-highlighting|
+" 8.  Signature			  |posting-sigfile|
+" 9.  Console			  |posting-console|
+" 10. Style  			  |posting-quoting_style|
+" 11. History			  |posting-history|
+" 12. Copyright			  |posting-copyright|
+" 13. Settings			  |posting-current_settings|
 "
-"------------------------------------------------------------------------
+"========================================================================
 " 1. Object				      *posting-shape*
 "
 " This is how a typical Posting posting should look like:
 "	
 "		     | From: ...              | <-- optional
 "		     | Newsgroups: ...        |
-"	   Header¹ --| Reply-To: ...          |
+"	   Header* --| Reply-To: ...          |
 "		     | Date: ...              |
 "		     | Subject: ...           |
 "		       <empty line>           |
@@ -68,24 +70,26 @@
 "	    Body ----| ~~                     | <-- optional
 "		     | <unquoted text>        |
 " _________
-" ¹ any number and any order
+" * any number and any order
 "
 " Any text behind the cutmark delimiter ("~~") will be ignored, thus you
 " may use this section to append annotations you don't want to be formated
 " or sent.
 "
-"------------------------------------------------------------------------
+"========================================================================
 " 2. Usage				      *posting-commands*
 "
-" To keep the GUI menu simple I did enclose a certain subset of commands
-" only, the vast majority, especially those who take extra arguments or
-" got more complex duties, is accessible via the keyboard only. (All you
-" need to know at first is <Tab> to step forward, <Cr> to split when
-" framing an answer and <M-z> to send..)
+" The GUI menu shows a certain subset of commands only, the vast majority,
+" especially those who take extra arguments or got more complex duties, is
+" accessible via the keyboard only. (For starters: Use <Tab> to go
+" forward, <Cr> to split when framing an answer and <M-z> to send.)
 "
+".........................................................................
+"  - Display -
 "					      *po_i_ALT-H*
 " <M-h>			Opens window showing this section. To close
-"			press <M-h> again.
+"			it press <M-h> again. (Use <Tab>/<S-Tab> to
+"			navigate.)
 "
 "					      *po_i_ALT-W*
 " <M-w>			Toggles line wrapping. (shows/hides lines
@@ -97,8 +101,8 @@
 "			When turned ob flag [VE] will be visible.
 "
 "					      *po_i_ALT-+*
-" <M-+>			Zoom in. (increases font size) Zoom in/out
-"			currently works with font Courier New only!
+" <M-+>			Zoom in. (increases font size) Currently
+"			supported: Courier_New, Lucida_Console.
 "
 "					      *po_i_ALT--*
 " <M-->			Zoom out. (increases visible area)
@@ -132,30 +136,32 @@
 " <M-y>	  		Turns on/off syntax highlighting.
 "
 "					      *po_i_ALT-X*
-" <M-x>	  		Opens Context window with information on author
+" <M-x>	  		Opens Context window. Appears to the left of the
+"			current window and shows information on author
 "			and logical structure. (Levels are represented
 "			by uppercase letters, starting with 'A' which
 "			always represents the author of the eldest piece
-"			of text found. (To see what levels are present
-"			at all take a look at the statusline.)
-"			Horizontal bars will indicate chronological
-"			inconsistencies.) This window is updated
+"			of text found. (The statusline will show a list
+"			of all levels found.) Horizontal bars and
+"			dot-lines will indicate chronological
+"			inconsistencies. This window is updated
 "			continuously.
 "
+".........................................................................
+"  - Attributions -
 "					      *po_i_<M-LeftMouse>*
 " <M-LeftMouse>		Use this to mark/unmark attribution-lines not
 "			yet detected properly. (Please note that marking
 "			levels already assigned won't work; you'd then
 "			have to unmark first. Attributions may span up
 "			to four lines maximum. To process a multi-line
-"			attribution klick on its first line.)
+"			attribution click on its first line.)
 "
-"					      *po_i_<M-C-LeftMouse>*
-" <M-C-LeftMouse>  	Like <M-LeftMouse>, however the line referred to
-"			is shortened too. Applying it a second time
-"			brings back the line in its original shape.
-"			This also applies to lines shortened automa-
-"			tically on start-up.
+"					      *po_i_<C-LeftMouse>*
+" <C-LeftMouse>   	Like <M-LeftMouse>, however the line referred to
+"			is shortened too. To restore apply again. (This
+"			also applies to lines shortened automatically
+"			on start-up.)
 "
 "					      *po_i_<M-RightMouse>*
 " <M-RightMouse>  	Appends an empty line.
@@ -167,8 +173,8 @@
 " #{0-e}  		Provides several facilities around attributions:
 " ##			"#{0-e}" (unmark attribution with level given
 " #u			(no need to move the cursor)), "##" (mark off
-" #m			current line as attribution-line (This is like
-" #t			<M-LeftMouse> or <M-C-LeftMouse> resp. depending
+" #m			current line as attribution-line (Works like
+" #t			<M-LeftMouse> or <C-LeftMouse> resp. depending
 " #j			on s:attrib_default_action. (for details see
 "			|posting-current_settings|))), "#u" (unmark all
 "			attributions currently marked), "#m" (find and
@@ -180,6 +186,8 @@
 "			be followed by a second character. (To insert
 "			a number sign character type CTRL-V #.)
 "
+".........................................................................
+"  - Moving -
 "					      *po_i_<Tab>*
 "					      *po_n_<Tab>*
 "					      *po_i_<C-Tab>*
@@ -187,23 +195,32 @@
 " <C-Tab>  		quotes, i. e. level-1-quotations. The cursor
 "			will stop at places likely being suitable for
 "			framing an answer. (Press <Cr> or <C-Cr> (see
-"			below) to do so.) Please note, after scrolling
-"			via Page-keys (see |po_i_<PageUp>|), search will
-"			start from top of the screen regardless of where
-"			the cursor is. On unquoted lines press <C-Tab>
-"			instead.
+"			|po_i_<Cr>|) to do so.) After scrolling via
+"			<PageUp> or <PageDown> (see |po_i_<PageUp>|),
+"			<Tab> will start searching in the first line
+"			currently visible, and <S-Tab> in the last line
+"			currently visible, regardless of where the
+"			cursor actually is. On unquoted lines press
+"			<C-Tab> instead.
 "
 "					      *po_i_<S-Tab>*
 " <S-Tab>  		Like <Tab> just opposite direction.
 "
-"					      *po_i_ALT-L*
-" <M-l>	  		Removes signatures and commercial ads.
-"
+".........................................................................
+"  - Quoting -
 "					      *po_i_ALT-T*
-" <M-t>	  		Resizes/replaces tab's. Since the actual size of
+" <M-t>	  		Apply this _prior to_ composing if you want your
+"			reply to be on top of the quotation. (changes
+"			meaning of <M-z> and <M-p>)
+"
+"					      *po_i_ALT-L*
+" <M-l>	  		Clean up. (removes signatures and commercial ads)
+"
+"					      *po_i_ALT-B*
+" <M-b>	  		Resizes/replaces tab's. Since the actual size of
 "			tabulation characters is specific to the program
 "			used for viewing, messages with tab's may look
-"			strange. Via <M-t> you can readjust your local
+"			strange. Via <M-b> you can readjust your local
 "			setting and replace tab's found with an
 "			appropriate number of spaces, so that your
 "			message won't change appearance again when
@@ -221,24 +238,24 @@
 "					      *po_i_ALT-I*
 " <M-i>	 		Converts top-posting style message into bottom-
 "			posting style message (interleaved). You may use
-"			this to convert TOFU's, which is the main
-"			purpose of this command, as well as pure
-"			top-postings with fullquote where text is not
-"			prepended by angle brackets as usual when
-"			quoting. This should work fine in most cases, it
-"			might fail however for hybrid messages often
-"			seen too, where both common styles are mixed up
-"			to build something 'very special'. Please note
-"			that this command should be applied prior to
-"			framing an answer. To undo apply <M-i> again.
+"			this to fix up TOFU, which is the main purpose
+"			of this command, as well as pure top-postings
+"			with fullquote where text is not prepended by
+"			angle brackets as usual when quoting. This
+"			should work fine in most cases, it might fail
+"			however for hybrid messages often seen too,
+"			where both common styles are mixed up to build
+"			something 'very special'. Please note that this
+"			command should be applied prior to framing an
+"			answer. To undo apply <M-i> again.
 "
 "					      *po_i_SHIFT-ALT-I*
-" <S-M-i>  		Like <M-i>, however aittributions already marked
+" <S-M-i>  		Like <M-i>, however attributions already marked
 "			are left untouched. (<M-i> isn't entire
 "			foolproof since it essentially depends on proper
 "			attribution recognition. To accomplish
 "			conversion anyway go ahead as follows: "#u" ->
-"			"#t" -> "##" (<M-LeftMouse>, <M-C-LeftMouse>) ->
+"			"#t" -> "##" (<M-LeftMouse>, <C-LeftMouse>) ->
 "			<S-M-i>)
 "
 "					      *po_i_ALT-D*
@@ -258,12 +275,11 @@
 "			depending on the area you select, you might be
 "			prompted several times.) To prevent a certain
 "			region from being taken out press <Esc>. When
-"			[count] is given <M-a> has a slightly different
-"			meaning. Instead of asking whether or not to
-"			replace, parts with level greater than [count]
-"			are removed automatically. This way you can cut
-"			off elder parts at a single blow while still
-"			keeping the message's logical structure intact.
+"			[count] is given <M-a> will automatically remove
+"			quotes with level greater than [count]. This way
+"			you can cut off elder parts at a single blow
+"			while still keeping the message's logical
+"			structure intact.
 "
 "					      *po_n_SHIFT-ALT-A*
 "					      *po_v_SHIFT-ALT-A*
@@ -271,17 +287,25 @@
 " {Visual}<S-M-a>  	reformated too.
 "
 "					      *po_i_<Cr>*
-"					      *po_n_<Cr>*
-" <Cr> 			Splits paragraph and removes quotes with level
-"			greater than [count]; text below remains
-"			unchanged. Note: When [count] is given, <Cr>
-"			also checks the chronological order, that's to
-"			say unordered parts are then removed thereby too
-"			even if their quoting level might be within the
-"			given range!
+" <Cr> 			* Compose screen ([-C-]):
+"			Level-1-quotations: Splits paragraph, checks
+"			chronological order, removes incoherent parts and
+"			quotes elder than those of level 2 and turns on
+"			Scan mode in case there are lines longer than
+"			allowed; text below remains unchanged. (Supply
+"			[count] to broaden/narrow the range of levels to
+"			keep. "<C-O>3<Cr>" for instance will keep levels
+"			one to three.)
+"			Text written by yourself: Insert Carriage Return
+"			character. (When s:format_flowed is set to 1, <Cr>
+"			will also remove trailing whitespace, i. e. it
+"			will insert a so-called Hard line break as
+"			described in RFC 2646.)
+"			* Preview screen ([--P]):
+"			Send.
 "
-"					      *po_i_<C-Cr>*
-"					      *po_n_<C-Cr>*
+"					      *po_i_CTRL-<Cr>*
+"					      *po_n_CTRL-<Cr>*
 " <C-Cr>  		Like <Cr> but additionally turns on Scan mode
 "			which allows to quickly reformat through quoted
 "			text containing tables, lists and so on,
@@ -290,14 +314,14 @@
 "
 "					      *posting-scanmode*
 "
-"			n, <Tab>       go to next non-empty line
-"			N              go to next paragraph
-"			p, <Bs>        go to previous non-empty line
-"			P              go to previous paragraph
+"			<Tab>          go to next non-empty line
+"			s              go to next paragraph (skip)
+"			<Bs>           go to previous non-empty line [1]
+"			p              go to previous paragraph
 "			+              mark to next non-empty line
 "			j              justify visually selected area
-"			.              justify to next line¹
-"			<Cr>           justify to the end of paragraph²
+"			.              justify to next line [2]
+"			<Cr>           justify to the end of paragraph [3]
 "			<C-Cr>         justify to the end
 "			a              abridge visually selected area
 "			1, 2,..., E    abridge to the end
@@ -316,41 +340,31 @@
 "			a	       abridge visually selected area
 "			<Esc>          quit
 "
-"			You may issue this command from unquoted lines,
-"			too. Scan mode then is turned on for the first
-"			quotation found when searching backwards.
+"			To narrow the range of levels to keep supply
+"			a [count] denoting the maximum level allowed.
+"			(Please note <C-Cr> will check the logical
+"			structure then as well, i. e. incoherent parts
+"			will disappear too even if their quoting level
+"			might be within the given range!) You may issue
+"			this command from unquoted lines as well. Scan
+"			mode is turned on then for the first quotation
+"			found when searching backwards. (Console Vim: Use
+"			<M-f> in case <C-Cr> doesn't work.)
 "			_________
-"			¹ ignores leading numbers
-"			² visually selected area in case it spans more
-"			  than a single line
+"			[1] unmark current line in case the region
+"			    selected spans more than a single line
+"			[2] ignores leading numbers
+"			[3] visually selected area in case it spans more
+"			    than a single line
 "
-"					      *po_v_CTRL-Y*
-" <C-y>			Yanks text selected into clipboard.
+"					      *po_v_<Space>*
+" {Visual}<Space>  	Coverts to format fixed.
 "
-"					      *po_i_CTRL-P_<Space>*
-" <C-p><Space> 	  	Puts text from clipboard after the cursor
-"			(shortcuts <C-p>{char} are available in Insert
-"			mode only)
+"					      *po_v_f*
+" {Visual}f  		Coverts to format flowed.
 "
-"					      *po_i_CTRL-P_I*
-" <C-p>i  		Inserts text from clipboard optionally shifted
-"			to the right
-"
-"					      *po_i_CTRL-P_CTRL-I*
-" <C-p><C-i>		Like "<C-p>i" but lines are wrapped too to
-"			suit line length
-"
-"					      *po_i_CTRL-P_Q*
-" <C-p>q  		Inserts text from clipboard '|'-quoted
-"
-"					      *po_i_CTRL-P_CTRL-Q*
-" <C-p><C-q>		Like "<C-p>q" but lines are wrapped too to
-"			suit line length
-"
-"					      *po_i_CTRL-P_B*
-" <C-p>b  		Inserts text from clipboard surrounded by a
-"			Frame section
-"
+".........................................................................
+"  - Composing -
 "					      *po_i_CTRL-S_F*
 "					      *po_v_CTRL-S_F*
 " <C-s>f  		Inserts Footnote section. (Text inside will
@@ -371,6 +385,38 @@
 " {Visual}<C-s>b  	(content will be surrounded by a frame (see
 "			|posting-sections|))
 "
+"					      *po_v_CTRL-Y*
+" <C-y>			Yanks text selected into clipboard.
+"
+"					      *po_i_CTRL-P_F*
+" <C-p>f  		Inserts text from clipboard as Footnote before
+"			cursor (shortcuts <C-p>{char} paste text before
+"			the cursor or before the current line resp.)
+"
+"					      *po_i_CTRL-P_T*
+" <C-p>t  		Inserts text from clipboard as Table
+"
+"					      *po_i_CTRL-P_B*
+" <C-p>b  		Inserts text from clipboard as Box
+"
+"					      *po_i_CTRL-P_<Space>*
+" <C-p><Space> 	  	Inserts text from clipboard
+"
+"					      *po_i_CTRL-P_I*
+" <C-p>i  		Inserts text from clipboard optionally shifted
+"			to the right
+"
+"					      *po_i_CTRL-P_CTRL-I*
+" <C-p><C-i>		Like "<C-p>i" but lines are wrapped too to
+"			suit line length
+"
+"					      *po_i_CTRL-P_Q*
+" <C-p>q  		Inserts text from clipboard '|'-quoted
+"
+"					      *po_i_CTRL-P_CTRL-Q*
+" <C-p><C-q>		Like "<C-p>q" but lines are wrapped too to
+"			suit line length
+"
 "					      *po_i_ALT-C*
 "					      *po_v_ALT-C*
 " <M-c>			Centers visually selected area/paragraph.
@@ -385,27 +431,15 @@
 "					      *po_n_ALT-J*
 "					      *po_v_ALT-J*
 " <M-j>			Adjusts line-width and/or corrects bad quoting
-" {Visual}<M-j>		markup. This shortcut is available in Normal,
-"			Insert and Visual mode and may be used for text
-"			typed in as well as for quotations. (Please note
-"			that applying <M-j> to unquoted text which is
-"			not part of a Table section turns off formatting
-"			of unquoted text via <M-p> or <M-z>. (Flag
-"			[FT] will show up then.) Note also please that
-"			<Cr> will have a different meaning in case that
-"			s:format_flowed is set to 1. This is due to that
-"			according to RFC 2646 paragraphs need to be
-"			terminated by a so-called Hard line break. (A
-"			side effekt of this you may find useful is that
-"			text terminated this way, i. e. by pressing <Cr>
-"			in Insert mode, always will be treated as an
-"			independent part, that's to say the overall
-"			structure of what has been written is preserved
-"			even if you won't insert empty lines to build
-"			separated blocks of text. Hard line breaks once
-"			entered will persist.) Lists which are not
-"			numbered are expected to be subdivided via
-"			list-bullets '-' (hyphen) or '*' (star).)
+" {Visual}<M-j>		markup. Available in Normal, Insert and Visual
+"			mode and may be used for text typed in as well as
+"			for quotations. (Please note that applying <M-j>
+"			to unquoted text which is not part of a Table
+"			section turns off formatting of unquoted text via
+"			<M-p> or <M-z> - flag [FT] will show up then.
+"			Lists which are not numbered are expected to be
+"			subdivided via list-bullets '-' (hyphen) or '*'
+"			(star).)
 "
 "					      *po_i_SHIFT-ALT-J*
 "					      *po_n_SHIFT-ALT-J*
@@ -413,21 +447,21 @@
 " <S-M-j>  		Like <M-j>, leading numbers however won't be
 " {Visual}<S-M-j>  	treated as if being part of a numbered list.
 "
+".........................................................................
+"  - Controls -
 "					      *po_i_ALT-P*
 "					      *po_n_ALT-P*
 " <M-p>			Shows preview, i. e. formats what has been
 "			written (text including sections (table, box)
 "			and footnotes), checks quoting markup and
-"			chronological order, removes text elder than
-"			that of quoting level [count] and any text found
+"			chronological order, removes quotes elder than
+"			those of quoting level [count] and any text found
 "			after the last unquoted non-empty line. Flag
-"			[--P] will show up when final-formatting is
-"			done. To leave Preview screen apply <M-p> again.
-"			(Please note, when formatting numbered or
-"			bullet-lists, the number/bullet has to be placed
-"			in the first column, otherwise it'll be
-"			considered as being indented and thus left
-"			untouched.)
+"			[--P] will show up when final-formatting is done.
+"			To leave Preview screen press <M-p> again.
+"			(Numbered or bullet-lists: Make sure the
+"			number/bullet starts in column 1; indented text is
+"			left untouched!)
 "
 "					      *po_i_SHIFT-ALT-P*
 "					      *po_n_SHIFT-ALT-P*
@@ -435,24 +469,22 @@
 "
 "					      *po_i_ALT-O*
 "					      *po_n_ALT-O*
-" <M-o>			Save and exit. Use this in case you intend to
-"			break and resume writing later. The message is
-"			marked as draft to ensure that it won't change
-"			again when opened later. (Annotations are left
-"			untouched.) When loading a draft again the
-"			session is restored exactly as it was when
-"			exiting. (This needs global restore to be
-"			enabled. (":set vi+=!"))
+" <M-o>			Save and exit. Use this to break and resume
+"			writing later. The message will be marked as draft
+"			to ensure that it won't change again when opened
+"			later. (Annotations are left untouched.) When
+"			loading a draft again the session is restored
+"			exactly as it was when exiting. (Needs global
+"			restore to be enabled: ":set vi+=!")
 "
 "					      *po_i_ALT-Z*
 "					      *po_n_ALT-Z*
 " <M-z>			Send. You may use this command from all three
-"			Screens, i. e. Repair screen ([R--]), Compose
-"			screen ([-C-]) and Preview screen ([--P]). When
-"			applied from Compose screen you may supply an
-"			additional [count] parameter denoting the maximum
-"			level of quoted text you want to keep. Please note
-"			that Vim won't terminate when Posting has been
+"			Screens, i. e. Repair- ([R--]), Compose- ([-C-])
+"			and Preview-screen ([--P]). In Compose screen you
+"			may supply an additional [count] parameter
+"			denoting the number of levels to keep. Please note
+"			that Vim won't terminate when Posting had been
 "			called via ":Post!"; instead it will be minimized
 "			or iconised resp. depending on the operating
 "			system being used.
@@ -466,49 +498,42 @@
 "					      *po_i_<PageDown>*
 " <PageUp>		Slightly different to the default. When
 " <PageDown>		scrolling the place the cursor is on is stored
-"			(cursor stops blinking then) and restored as
-"			soon as this position again becomes part of the
-"			visible file area. Pressing it once means the
-"			content of the window will move by a quarter
-"			of its current height.
+"			(cursor stops blinking then) and restored as soon
+"			as this place again becomes part of the visible
+"			file area. (To reset this mechanism press <M-Up>
+"			or <M-Down>.) Pressing once means the content of
+"			the window will move by a quarter of its current
+"			height.
 "
 "					      *po_i_<S-PageUp>*
 "					      *po_i_<S-PageDown>*
-" <S-PageUp>		Like <PageUp>/<PageDown>, content will move a
-" <S-PageDown>		whole page however.
+" <S-PageUp>		Like <PageUp>/<PageDown> but content will move a
+" <S-PageDown>		whole page.
 "
 "					      *po_i_<M-Up>*
 "					      *po_i_<M-Down>*
 " <M-Up>  		Moves cursor to next nearest reply above/beneath
 " <M-Down>  		the current position.
 "
+".........................................................................
+"  - Repair screen ([R--]) -
 "					      *po_n_,q*
-" ,q			Helps correcting unusual quote-marks. This
-"			shortcut is available for Repair screen [R--]
-"			only, i. e. after pressing <M-u> to undo
-"			":Post". (You won't hardly ever need it except
-"			in those rare cases where something really fatal
-"			happened on start-up. To further ease debugging
-"			structures which are likely to become a problem
-"			when mailing will appear highlighted.)
+" ,q			Removes unusual quote-marks.
 "
 "					      *po_n_,m*
-" ,m			Removes unusual characters. To apply place the
-"			cursor on the character in question and type
-"			",m". (available for Repair screen only)
+" ,m			Removes unusual characters. (place the cursor on
+"			the character in question)
 "
 "					      *po_n_,c*
 " ,c			Cuts off invalid levels. (There's a fixed upper
 "			limit on the level quotations found may have.)
-"			(available for Repair screen only)
 "
 "					      *po_i_ALT-D*
 "					      *po_n_ALT-D*
 " <M-u>	 		Preformat. (reissues a previously reversed
-"			":Post" command) (available for Repair screen
-"			only)
+"			":Post" command)
 "
-"------------------------------------------------------------------------
+"========================================================================
 " 3. Macros				      *posting-sections*
 "
 " To accomplish more complex changes use Posting's built-in macro
@@ -516,10 +541,10 @@
 "
 "    a)	Footnote:     |... {FN<opt> <text>} ...
 "
-"	(Makes Vim create a separate section at the end of your message
-"	presenting text of this type arranged in the order it appears in
-"	your message. Each item is referenced by a unique number. (valid
-"	options: /1 (don't wrap))
+"	Makes Vim create a separate section at the end of your message.
+"	This section will present text of this type arranged in the order
+"	it appears in your message. Each item is referenced by a unique
+"	number. (valid options: /1 (don't wrap))
 "
 "    b)	Table:	      |...
 "		      |{TB
@@ -527,10 +552,11 @@
 "		      |}
 "		      |...
 "
-"	(Sections of this type are meant for text that may not be for-
-"	mated by Posting, i. e. tables, lists and so on. These passages
-"	will appear in their original shape when final formatting is
-"	done.)
+"	Sections of this type are meant for text that should remain as it
+"	is, i. e. tables, lists and so on. These passages will appear in
+"	their original shape when final formatting is done. (Of special
+"	interest when generating format=flowed messages! (see also
+"	|posting-flowed_format|))
 "
 "    c)	Box (Frame):  |...
 "		      |{BX<opt>
@@ -538,7 +564,7 @@
 "		      |}
 "		      |...
 "
-"	(Draws a frame around what has been written. (valid options:
+"	Draws a frame around what has been written. (valid options:
 "	/w<arg>	(textwidth to use for reformatting), /t<arg> (string to
 "	use as title), /c (box will appear centered))
 "
@@ -546,57 +572,98 @@
 " nesting of Table and Box sections however (among each other as well as
 " alternating) normally won't work.
 "
-"------------------------------------------------------------------------
-" 4. Invocation				      *posting-invocation*
+"========================================================================
+" 4. Flowed format			      *posting-flowed_format*
 "
-" To automatically call Posting when loading a mail message file add
+"   General remarks:
+" - Requirements: You need e-mail/news software that can be configured in
+"   a way that the Content-type header of outgoing messages gives an
+"   indication of the format of the message. (see RFC 3676) Up to now just
+"   a few agents offer this ability. (e. g. recent releases of Xnews and
+"   Pine) The agent ideally should *not* make any changes to messages
+"   created via Posting.
+" - Quotes: Actually there's no need to trim quotes which are in flowed
+"   format since text of this sort will span a whole screen width anyway,
+"   no matter at what position within the line soft line breaks occur (and
+"   no matter how wide your window is). If you need to do so nevertheless,
+"   maybe since the part in question was messed up during transport, make
+"   sure the region selected is indeed a paragraph. All lines within this
+"   area (except the last one and lines at level transitions) will become
+"   flowed! (They will appear as an independent piece of text when viewed
+"   with format=flowed-capable software.) Keep this in mind also when
+"   using <S-M-p> or <S-M-z> to reformat quotes "on the fly"!
+" - Lists: Structures of this type are _not_ suitable for this format,
+"   i. e. they should _not_ carry trailing whitespace! (For lists which
+"   are numbered or subdivided via list-bullets '-' or '*' this is done
+"   automatically when reformatting. Just make sure the region selected
+"   covers nothing but the list.)
+" - Pasting: Quite similar. Make sure foreign pieces of text won't bring
+"   along trailing whitespace! Accidentally pasted soft line breaks might
+"   mess up your message. In case of doubt paste tabled! (You may also
+"   paste indented or quoted; linewise acting commands of "<C-p>{char}"
+"   type will remove trailing whitespace by default in case that
+"   s:format_flowed was set to 1.) To paste flowed text which is
+"   _supposed_ to appear flowed, use "<C-p><Space>" or built-in facilities
+"   (""*p", ":put *" etc.).
+" - Preview screen: Paragraphs (according to RFC 3676 blocks of text
+"   consisting of flowed lines followed by a single line in fixed format)
+"   are highlighted. This shall give you an idea on how your message will
+"   look like when viewed with flowed capable software (and also make
+"   it less likely accidentally flowed lines will leave your system). (See
+"   |posting-highlighting| for details on how to change color or style.)
+"   To fix flaws use <Space> and "f". (see |po_v_<Space>|, |po_v_f|)
+" - "Conclusion": Give it a try! Format=flowed can improve readability
+"   noticeably and its few implications, mainly arising from the way it
+"   handles lines with trailing whitespace, shouldn't mean a real obstacle
+"   when composing.
+"
+"========================================================================
+" 5. Invocation				      *posting-invocation*
+"
+" To ensure Posting gets invoked automatically when a mail message file
+" is opened add
 "
 "	autocmd FileType mail Post 72
 "
-" to your .vimrc-file (see also |filetype|) or
+" to your .vimrc-file (see also |filetype|) or, alternatively,
 "
 "	gvim "+Post 72"
 "
-" resp. to your mailer/news-agent's config.-file if you want the
-" application being used for mail/news transfer to invoke Posting. To
-" further reduce the time spent on start-up make use of Vim's inbuild
-" client-server feature.
+" to your mailer/news-agent's config.-file if you want the application
+" being used for mail/news transfer to invoke Posting. To minimize the
+" delay on start-up make use of Vim's built-in client-server facilities.
 "
 "	gvim --servername MAIL --remote-silent "+Post! 72"
 "
-" for instance would have Vim start anew only in case that it couldn't
-" find an instance which is already running. Shortcuts <M-z> (Send) and
-" <M-o> (Postpone) will then have the meaning of "minimize" or "iconise"
-" resp., in any case they won't stop an already running server. To ensure
-" the server will terminate when leaving one might consider adding
-" something like
+" for instance makes Vim look for servers already running prior to
+" composing. Vim will start almost instantaneously when an instance could
+" be found! (Shortcuts <M-z> (Send) and <M-o> (Postpone) then will have
+" the meaning of "minimize" or "iconise" resp., in any case they won't
+" force Vim to quit when sending. (To ensure the server will terminate
+" when leaving one might consider adding something like
 "
 "	gvim --servername MAIL --remote-send ":qa!<Cr>"
 "
-" to the local logout/shutdown script. (A slight disadvantage of this
-" method is that you won't be able to control the usual markup check on
-" start-up since Vim won't recognize commands issued manually when
-" running in server mode.)
+" to the local logout/shutdown script.))
 "
-" (To avoid loading Posting at all, either remove it from your local
-" plugin directory, or put "let loaded_posting = 1" in your .vimrc file.)
+" To avoid Posting gets source'd at all, either remove it from your plugin
+" directory, or put "let loaded_posting = 1" in your .vimrc file.
 "
-"------------------------------------------------------------------------
-" 5. Window				      *posting-window*
+"========================================================================
+" 6. Window				      *posting-window*
 "
 " When using Vim as a replacement in mail/news applications such as Mutt
 " or Xnews for instance you might find it pleasant to know the GUI window
-" always appears in the same place. Supply additional options to do so:
+" appears always in the same place. Supply additional options to do so:
 " (see also |winpos| and |-geom|)
 "
 "	gvim --cmd "winpos X Y" <file>	(Windows)
 "	gvim -geometry XxY <file>	(xterm)
 "
-" Alternatively you may use Posting's "s:window_position" variable as
-" well. (see Settings folder)
+" (see also |posting_current_settings|)
 "
-"------------------------------------------------------------------------
-" 6. Highlighting			      *posting-highlighting*
+"========================================================================
+" 7. Highlighting			      *posting-highlighting*
 "
 " Below you'll find a list of all syntax groups Posting makes use of for
 " highlighting. Names in parenthesis denote highlighting groups linked to
@@ -606,7 +673,8 @@
 " (Delimiter), postingQuoted1 (Comment), postingQuoted2 (Constant),
 " postingQuoted3 (Identifier), postingQuoted4 (Statement),
 " postingQuotedTab (Error), postingQuotedLong (Search), postingSection
-" (Special), postingTrailer (Error), postingAnnotation (Todo)
+" (Special), postingTrailer (Error), postingAnnotation (Todo),
+" postingFlowed (Type)
 "
 " To change the color of level-1-quotations you may either change it
 " directly
@@ -622,49 +690,87 @@
 " not just affects a single syntax group, but all syntax groups currently
 " linked to default hightlighting groups. (see |:colorscheme| for details)
 "
-"------------------------------------------------------------------------
-" 7. Signature				      *posting-sigfile*
+"========================================================================
+" 8. Signature				      *posting-sigfile*
 "
-" Posting provides a simple signature import mechanism too, you may use
-" to automatically append signatures when composing. To do so simply
-" create a file listing signatures you like (each item has to be followed
-" by a single number sign character ('#') located on a line of its own),
-" and assign its path to "s:sig_file" (see below) so that Posting can find
-" it. Then each time you press <M-p> or <M-z> resp. (see above) Posting
-" will append a different signature to the message-body. (The file may
-" contain an arbitrary number of signatures.)
+" To have Vim append signatures automatically when composing create a list
+" of signatures you like (each item has to be followed by a single number
+" sign character ('#') located on a line of its own), and assign its path
+" to "s:sig_file" (|posting-current_settings|). The file may contain an
+" arbitrary number of signatures.
 "
-"------------------------------------------------------------------------
-" 8. Style				      *posting-quoting_style*
+"========================================================================
+" 9. Console				      *posting-console*
+"
+" Just a minor collection of commands will be available for console Vim.
+" As you know there's no way to control window size and position when
+" using console Vim, thus commands attempting to do so won't work. Besides
+" you may notice certain shortcuts do not work as expected, either since
+" the terminal emulator doesn't support particular keystrokes (You'll have
+" to edit posting.vim then - look for a function named "Interface()".), or
+" key codes are sent but differ to those expected for :maps written in
+" standard <>-notation (Remap those keys! To remap <C-Tab> for instance
+" add "imap {lhs} <C-Tab>" ({lhs} means "CTRL-V CTRL-<Tab>") to your
+" .vimrc-file.). (see also |map-keys-fails|) Make sure also highlighting
+" groups used are set appropriately! Not few colorschemes don't provide
+" 'ctermfg' and 'ctermbg' resp.. You may need to (re-)define 'Ignore' as
+" well. (see |posting-highlighting|) Once you did this Posting should work
+" as usual.
+"
+"========================================================================
+" 10. Style				      *posting-quoting_style*
 "
 " Due to that there's no real universally valid standard on how quoting
 " has to be done in electronic mail exchange the style as provided by
 " Posting mainly has been affected by own notions and my personal taste.
-" A few ideas though are taken from other ressources, such as related
+" Merely a few ideas are taken from other ressources, such as related
 " RFC's or privately maintained sites providing general guidelines.
 "
 " [1] "Netiquette Guidelines" (Intel Corp., '95) RFC 1855
-"     ftp://ftp.demon.co.uk/pub/mirrors/internic/rfc/rfc1855.txt
+"     http://www.ietf.org/rfc/rfc1855.txt
 "
-" [2] "The Text/Plain Format Parameter" (R. Gellens, '99) RFC 2646
-"     http://www.ietf.org/rfc/rfc2646.txt
+" [2] "The Text/Plain Format and DelSp Parameters" (R. Gellens, '04) RFC 3676
+"     http://www.ietf.org/rfc/rfc3676.txt
 "
 " [3] Ivan Reid's excellent quoting guideline not just valuable to
 "     motorcycle fans... ;-)
 "     http://www.windfalls.net/ukrm/postinghelp.html
 "
 " [4] Dirk Nimmich's more general overview (which is not that exhaustive
-"     however as far as quoting related aspects are concerned)
+"     though as far as quoting related aspects are concerned)
 "     http://www.netmeister.org/news/learn2quote.html
 "
 " [5] Daniel R. Tobias' more than exhaustive Mail Format Site
 "     http://mailformat.dan.info
 "
 " History {{{2
-"------------------------------------------------------------------------
-" 9. History				      *posting-history*
+"========================================================================
+" 11. History				      *posting-history*
 "
-" Dec 01 2003:	- Introduced Repair/Preview screen
+" 2004 Jun 22:	- Works for console Vim too now. (see |posting-console|)
+"		- Added paste command variants Footnoted
+"		  (|po_i_CTRL-P_F|) and Tabled (|po_i_CTRL-P_T|).
+"		- Top-posting: Footnotes appear at the proper place now,
+"		  i. e. on top of the quotation. Once turned on this mode
+"		  will persist even after breaks.
+"		- <Cr> turns on Scan mode automatically in case there
+"		  are lines longer than allowed.
+"		- Zoom in/out works for Lucida_Console too now.
+"		- Improved format=flowed support (partly revised, see
+"		  also |posting-flowed_format|)
+"		- Various minor changes (also bugfixes).
+"
+" 2004 Jan 18:	- Compose screen: Added top-posting support (very
+"		  basic, see |po_i_<M-<>|) <Cr> extracts levels 1 and
+"		  2 now by default. Erratic level transitions (i. e.
+"		  indicating something is missing) are considered to be
+"		  inconsistencies now. Scan mode: Modified keyboard layout
+"		  and VISUAL mechanism.
+"		- Preview screen: Press <Cr> to send. (There's no prompt
+"		  any longer when sending via <M-z> or <M-p><Cr>!)
+"		- Various minor changes
+"
+" 2003 Dec 01:	- Introduced Repair/Preview screen
 "		- Added Context window feature (slot in names of authors)
 "		- Added basic Folding support (hide elder levels)
 "		- Shortcuts: Added <M-+>/<M--> (zoom in/out),
@@ -879,10 +985,10 @@
 "		- Changed posting menu slightly
 "
 " Copyright {{{2
-"------------------------------------------------------------------------
-" 10. Copyright				      *posting-copyright*
+"========================================================================
+" 12. Copyright				      *posting-copyright*
 "
-" Copyright (C) 2002, 2003 Tim Allen
+" Copyright (C) 2002-2004 Tim Allen
 "
 " This program is free software; you can redistribute it and/or modify it
 " under the terms of the GNU General Public License as published by the
@@ -899,10 +1005,10 @@
 " Place - Suite 330, Boston, MA 02111-1307, USA to obtain a copy.
 "
 " }}}2
-"=========================================================================
+"
 " Settings {{{1
-"------------------------------------------------------------------------
-" 11. Settings				      *posting-current_settings*
+"========================================================================
+" 13. Settings				      *posting-current_settings*
 "
 " Edit this section to fit Posting to your needs! (Please note that most
 " of what you can find here can be done manually as well after start-up.
@@ -922,7 +1028,7 @@ let s:attrib_default_action = "check"
 " Indicates what to do with attributions. You may select from among three
 " possible choices: "mark" (don't touch (<M-LeftMouse>)), "check" (shorten
 " in case that line length exceeds limit), "force" (convert to standard
-" type (<M-C-LeftMouse>)).
+" type (<C-LeftMouse>)).
 "
 let s:rem_trailers_on_startup = 0
 " Set this to 1 to remove signatures and disclaimers found. (<M-l>)
@@ -969,12 +1075,12 @@ let s:validHeaders   = 'Newsgroups:\|From:\|To:\|Cc:\|Bcc:\|Reply-To:\|Subject:\
 let s:name	     = substitute('\v%([[:upper:]]\. )?[[:upper:]][[:lower:]]{2,}%(-[[:upper:]][[:lower:]]{2,})?%( x[[:upper:]][[:lower:]]+x)?%( [[:upper:]][[:lower:]]?\.)?%( %([[:upper:]]x|[[:upper:]][[:lower:]])?[[:upper:]][[:lower:]]+%(\-[[:upper:]][[:lower:]]+)?)?\m', 'x', "'", 'g')
 let s:host	     = '%(%(\[%(\d{1,3}\.){3})|%(%([a-zA-Z0-9-]+\.)+))%(\a{2,4}|\d{1,3})\]?'
 let s:email	     = '\v[< (]@<=[0-9A-Za-z_-]+%(\.[0-9A-Za-z_-]+)*\@' . s:host . '\_[> )]@=\m'
-let s:verb	     = '\%(wrote\|writes\|said\|says\|stated\|states\|typed\|opinion\|schrieb\|schreibt\|geschrieben\|scripsit\|écrit\)'
+let s:verb	     = '\%(wrote\|writes\|said\|says\|stated\|states\|typed\|opinion\|schrieb\|schreibt\|geschrieben\|scripsit\|écrit\|scritto\)'
 let s:year	     = strftime("%Y")
 let s:repLedPrt	     = '%( %(article|message)%( [<n].*)?|news:.+|" \<.*|[<(]\S+\@.*|\@\S+[>)].*|\@\S+ .*[("].*|%(\_^.*%(Sent:|Date:).*)@<!%( [1-3]?\d \u\l\l%( .*)?|[+\-][01]\d00(\D.*)?| ' . s:year . '%([, ].*)?)|%(\@|\m' . s:verb . '\v).*%(:|\.{3})|%([^> ]\>|\@).*\m' . s:verb . '\v)\s*\_$'
 let s:repLed	     = '\%(' . s:name . '\|' . s:email . '\|' . s:verb . '\).*[a-z>]\@<=\%(:\|\.\.\.\)\_$'
 let s:spaces	     = '                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        '
-let s:guiSup	     = has('gui')
+let s:gui	     = has('gui_running')
 
 
 function! s:SaveSett(...)
@@ -993,13 +1099,14 @@ function! s:InstDoc()
     % foldopen!
     1 d _ | 1/^"·/,$ d _
     % s/^\%("let \)\@!" \?//
-    call setline(1, "*posting.txt*\tStand-alone USENET/e-mail environment (v1.3)")
+    call setline(1, "*posting.txt*\tStand-alone USENET/e-mail environment (v1.4)")
     setl fo& tw=68 et sw=4 nojs
     let n = 1
     $?Settings {{?/^"\?let/;/^\n\%("\?let \)\@!/-1 g/^"\?let/ s/^\("\?\)let s:\(\w\+\) *= *\(.*\)$/\=n . (n > 9 ? ') ' : ')  ') . submatch(2) . (submatch(1) == '' ? ' = ' . submatch(3) : ' (disabled)')/
     \ | let n = n + 1
     \ | norm! jV/^$/-gqV'[>
-    % g/{{{\|}}}\|=\{10,}/d
+    % g/{{{\|}}}/d _
+    % s/^\_[[:blank:]]*$//
   endfunction
   unlet! s:helpDoc
   let pluginFile = s:vimPluginPath . '/posting.vim'
@@ -1012,8 +1119,8 @@ function! s:InstDoc()
     return
   endif
   let restBuf = (strlen(@%) ? 'b ' . bufnr("%") : 'enew')
-  exe s:SaveSett('ml', 'swf', 'ma', 'bk', 'fo', 'tw', 'et', 'sw', 'js', 'ei')
-  setl noml noswf ma nobk ei=all
+  exe s:SaveSett('ml', 'swf', 'ma', 'bk', 'fo', 'tw', 'et', 'sw', 'js', 'ul', 'uc', 'ei')
+  setl noml noswf ma nobk ul=-1 uc=0 ei=all
   exe 'e ' . pluginFile
   call s:MakeDoc()
   exe 'w! ' . docFile
@@ -1061,7 +1168,7 @@ function! s:Frame(act)
 endfunction
 
 function! s:Top()
-  sil! norm! gg
+  sil! norm! gg/^1>.*\S.*•\@<!$/s+2
 endfunction
 
 
@@ -1183,6 +1290,7 @@ function! s:ConWin(act, ...)
   let s:widthMax = 20
   function! s:MkNames()
     let line   = '________________________________________'
+    let dots   = '........................................'
     let lenMax = 0
     let i = 1
     while i <= b:levMax
@@ -1200,6 +1308,7 @@ function! s:ConWin(act, ...)
       let i = i + 1
     endwhile
     let s:line = strpart(line, 0, s:width)
+    let s:dots = strpart(dots, 0, s:width)
   endfunction
   function! s:MkList(top, bot)
     let offset	  = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
@@ -1222,8 +1331,10 @@ function! s:ConWin(act, ...)
       \ && (getline(n - 2)[0] != getline(n)[0] || getline(n - 2) =~ '•$'))))
 	let lev = ('0x' . getline(n)[0]) + 0
 	let @u = (lev > lev0) 
-	  \? substitute(@u, ' *.$', s:line . "\n" . strpart(s:name{lev} . s:spaces, 0, s:Max(s:Len(strlen(getline(n))), s:width)) . "\n", '') 
-	  \: @u . strpart(s:name{lev} . s:spaces, 0, s:Max(s:Len(strlen(getline(n))), s:width)) . "\n"
+	  \? substitute(@u, ' *.$', s:line . "\n" . strpart(s:name{lev} . s:spaces, 0, s:Max(s:Len(strlen(getline(n))), s:width)) . "\n", '')
+	  \: (lev < (lev0 - 1))
+	    \? substitute(@u, ' *.$', s:dots . "\n" . strpart(s:name{lev} . s:spaces, 0, s:Max(s:Len(strlen(getline(n))), s:width)) . "\n", '')
+	    \: @u . strpart(s:name{lev} . s:spaces, 0, s:Max(s:Len(strlen(getline(n))), s:width)) . "\n"
 	let lev0 = lev
       else
         let @U = (strlen(getline(n)) > s:width0 ? strpart(s:spaces, 0, s:Len(strlen(getline(n)))) : '') . "\n"
@@ -1236,24 +1347,30 @@ function! s:ConWin(act, ...)
     sil 1,.- d _
     exe 'norm! ' . a:top . 'zt'
   endfunction
-  if exists("s:fold") | return | endif
+  if exists('s:fold') || !s:gui | return | endif
   if a:act == 'on'
     if !exists("s:authBuf")
       if !exists("b:levMax")
 	let b:levMax = s:MaxBufLev()
       endif
       if b:levMax > 0
+	let levMax = b:levMax
 	let wl = winline()
       	sil! call s:MkList(1, line('$'))
       	setl wiw=1 sbo=ver,jump scb so=0
 	let top = s:WTop()
       	let s:co0 = &co | let &co = &co + s:width + 1
 	let wrap = &l:wrap
+	exe s:SaveSett('uc',  'ei')
+	set uc=0 ei=all
       	exe s:width . ' vnew CT'
       	setl scb bt=nofile bh=hide noswf
+	exe restSett
 	let &l:wrap = wrap
-	syn match postingLetter '\u\ze:'
+	syn match postingLetter '\u\ze: *$'
 	hi postingLetter gui=bold
+	exe 'syn match postingLevel1 "^ *\zs.*\ze ' . 'ABCDEFGHIJKLMNOP'[levMax - 1] . ': *$"'
+	hi postingLevel1 gui=underline
 	call s:MkBuf(top)
       	let s:authBuf = bufnr('%')
       	wincmd l
@@ -1403,11 +1520,11 @@ function! s:Columns()
   let maxCols = s:cols + 10
   let max = 1 | sil! g/^\x>.*•\@<!$/ if col('$') > max | let max = col('$') | endif
   let max = max - 1
-  return (max > s:cols ? s:Min(max, maxCols) : s:cols)
+  return (max > s:cols ? s:Min(max, maxCols) : s:cols) + 2
 endfunction
 
 function! s:Paste(reg, form, ...)
-  exe 'if col("$") > 1 || @' . a:reg . ' == "' . (a:reg == '*' ? '\n' : '') . '" | return | endif'
+  if col("$") > 1 | return | endif
   ma j | set paste | exe 'sil put! =\"\n\" . @' . a:reg | set nopaste | ma i
   setl et
   if a:form != 'nowrap'
@@ -1434,6 +1551,9 @@ function! s:Paste(reg, form, ...)
   else
     setl ts=8 | 'i,'j retab 2
   endif
+  if s:format_flowed
+    sil! 'i,'j s/ \+$//
+  endif
   sil 'i;/./- d | ma i
   sil 'j- v/./ ?.?+,. d
   if a:0 > 0 && a:1 > 0
@@ -1459,22 +1579,27 @@ endfunction
 
 function! s:Shft(n) range
   let sw0=&sw | let &l:sw=a:n
-  exe a:firstline . ',' . a:lastline . ' s/ *$//'
   exe a:firstline . ',' . a:lastline . ' >'
   let &l:sw=sw0
 endfunction
 
-function! s:GQ(type, fo, ...) range
-  function! s:Fmt()
-    norm! gq'x
-    let n = line('.')
-    if n > line("'x")
-     'x,.- s/.\zs$/ /e
-    endif
-    exe (n + 1) . 'ma x'
+function! s:Freeze(...) range
+  function! s:Indented(top, bot)
+    let i = a:top
+    while i <= a:bot && indent(i) == 0
+      let i = i + 1
+    endwhile
+    return (i > a:bot ? 0 : 1)
   endfunction
+  exe a:firstline . ',' . a:lastline . ' s/ \+$//e'
+  if a:0 > 0 || s:Indented(a:firstline, a:lastline)
+    exe a:firstline . ',' . a:lastline . 'call s:Shft(1)'
+  endif
+endfunction
+
+function! s:GQ(type, fo, ...) range
   exe s:SaveSett('et', 'fo')
-  exe 'setl et fo=' . a:fo
+  exe 'setl et fo=' . a:fo . (s:format_flowed ? 'w' : '')
   if a:type == 'txt'
     if a:0 > 0
       exe a:firstline
@@ -1486,12 +1611,10 @@ function! s:GQ(type, fo, ...) range
       endwhile
     endif
     let &l:tw = s:tw
-    if s:format_flowed == 1
-      exe a:firstline . 'ma x'
-      exe 'sil! ' . a:lastline . ' put _' | ma y
-      exe 'sil! ' . a:firstline . ",'y-" . ' g/\S$/ call s:Fmt()'
-      call setline("'y", '·')
-      exe 'sil! ' . a:firstline . ",'y-" . ' g/^[0-9-].*\n / .,.-/\S$/ call s:Shft(1)'
+    if s:format_flowed
+      exe 'sil! ' . a:lastline . " put ='·'" | ma y
+      exe 'sil! ' . a:firstline . 'norm! V' . s:Down(a:lastline - a:firstline) . 'gq'
+      exe 'sil! ' . a:firstline . ",'y-" . ' g/^[0-9-*].*\n / .,.-/\S$/ call s:Freeze("shift")'
       exe 'sil! ' . a:firstline . ",'y-" . ' s/^\%(>\|From \)\@=/ /'
       sil! 'y- s/\n.*//
     else
@@ -1499,13 +1622,17 @@ function! s:GQ(type, fo, ...) range
     endif
   else
     exe 'sil ' . a:lastline . ' put _' | ma y
-    exe a:firstline
+    exe a:firstline . ' put! _' | +
     while line('.') < line("'y")
       let lev = '0x' . getline('.')[0] + 0
       let &l:tw = s:tw - (lev > 0 ? lev + 1 : 0)
-      exe 'norm! 0-/\v^(\x\>).*%(\n\1@!|%$)2|"_d' . "gq']0m''[0I" . getline('.')[0] . ">''+"
+      exe 'norm! 0k/\v^(\x\>).*%(\n\1@!|%$)2|"_dgv' . ":s/ *$/ /e\<Cr>'[gq']0m''[0I" . getline('.')[0] . ">'':s/ *$//e\<Cr>+"
     endwhile
+    exe a:firstline . ' d _'
     sil 'y- s/\n//
+    if s:format_flowed && getline(a:firstline) =~ '^\x>\s*[0-9-*]'
+      exe a:firstline . ',. s/ *$//e'
+    endif
   endif
   let &l:tw = 0
   exe restSett
@@ -1573,13 +1700,17 @@ function! s:VisChar()
     call s:Hl('on', l1, c1, l2, c2, 'postingVisChar')
     let ch = getchar()
     if (ch == 113 || ch == "\<Right>") && c1 < strlen(getline(l1)) && mv !~ '[dl]'
-      let c1 = c1 + 1
+      call cursor(l1, c1)
+      exe 'sil! norm! /\%' . line('.') . 'l\s\@<=\S'
+      let c1 = col('.')
     elseif (ch == 43 || ch == "\<Down>") && l2 < line("'v") && mv !~ 'l'
-      let l2 = l2 + 1
+      let l2 = l2 + 1 + (getline(l2 + 1) =~ '^\x>\s*$')
       let c2 = strlen(getline(l2))
       let mv = mv . 'd'
     elseif (ch == "\<Bs>" || ch == "\<Left>") && c2 > 3
-      let c2 = c2 - 1
+      call cursor(l2, c2)
+      exe 'sil! norm! ?\%' . line('.') . 'l\S\s\@='
+      let c2 = col('.')
       let mv = mv . 'l'
     elseif ch == 97
       call s:Hl('off')
@@ -1610,7 +1741,6 @@ function! s:Scan() range
   endfunction
   exe s:SaveSett('ve', 'gcr', 'so', 'ws', 'sc', 'smd')
   setl ve=all gcr=v-n:ver1-blinkon0-Normal so=0 nows nosc nosmd
-  let wrap = &l:wrap | call s:Setl('nowrap')
   exe a:lastline . 'ma v'
   exe a:firstline . '-/^\x>.*\S/'
   let s:top = line('.')
@@ -1624,13 +1754,17 @@ function! s:Scan() range
     norm ,qe1gv
     redraw
     let ch = getchar()
-    if (ch == 110 || ch == 9 || ch == 32) && line('.') < line("'v")
+    if (ch == 9 || ch == 32) && line('.') < line("'v")
       norm ,qj,qB
-    elseif ch == 78 && line('.') < line("'v")
+    elseif ch == 115 && line('.') < line("'v")
       exe 'sil! norm $/\%(\_^\x>\s*\n\)\@<=\%<' . (line("'v") + 1) . 'l\x>,qB'
-    elseif (ch == 112 || ch == "\<S-Tab>" || ch == "\<Bs>") && line('.') > s:top
-      norm ,qk,qB
-    elseif ch == 80 && line('.') > s:top
+    elseif (ch == "\<S-Tab>" || ch == "\<Bs>") && line('.') > s:top
+      if line("'>") > line("'<")
+        norm ,qk
+      else
+        norm ,qk,qB
+      endif
+    elseif ch == 112 && line('.') > s:top
       exe 'sil! norm 0?\%(\_^\x>\s*\n\|\_^\%(\x>\)\@!.*\n\|\%^\)\@<=\%>' . (s:top - 1) . 'l\_^\x>,qB'
     elseif (ch == 43 || ch == "\<Down>") && line('.') < line("'v")
       norm ,qj
@@ -1647,7 +1781,7 @@ function! s:Scan() range
 	sil! norm :.,.-/^.*\n\%(\x>\)\?\s*$/ call s:RefQuo('wrap'),qj,qB
       endif
       call s:UpdConWin()
-    elseif ch == "\<C-Cr>"
+    elseif ch == "\<C-Cr>" || ch == 230
       sil! norm V'v:call s:RefQuo('wrap'),qB
       call s:UpdConWin()
       break
@@ -1672,7 +1806,19 @@ function! s:Scan() range
       norm ,qB
       call s:UpdConWin()
     elseif ch == 100
-      norm '<d'>,qB
+      sil! norm '<"_d'>
+      if getline('.') =~ '^\x>\s*$'
+	if getline(line('.') - 1) =~ '^$'
+	  . d _
+	elseif getline(line('.') - 1) =~ '^\x>\s*$'
+	  . d _ | call s:AdjQuo(line('.') - 1)
+	else
+	  + | call s:AdjQuo(line('.') - 1)
+	endif
+      elseif getline('.') =~ '^$' && getline(line('.') - 1) =~ '^\x>\s*$'
+	.- d _
+      endif
+      norm ,qB
       call s:UpdConWin()
     elseif ch == 104
       norm! 0
@@ -1704,7 +1850,6 @@ function! s:Scan() range
   if line("'w") != s:bot || exists("s:update") | call s:ConWin('update') | endif
   norm ,qe0
   exe restSett
-  call s:Setl(wrap == 1 ? 'wrap' : 'nowrap')
 endfunction
 
 function! s:ABot(top)
@@ -1792,6 +1937,10 @@ function! s:Sep(line)
   call setline(a:line + 1, s:SMin(s1, s2))
 endfunction
 
+function! s:AdjQuo(line)
+  call setline(a:line, '0123456789abcdef'[s:Min(s:DLev(a:line - 1), s:DLev(a:line + 1))] . '>')
+endfunction
+
 function! s:DSep(line)
   if getline(a:line + 1) =~ '^\x>.*\S'
     call append(a:line, '')
@@ -1799,7 +1948,7 @@ function! s:DSep(line)
   else
     let s:appendedLines = 0
   endif
-  call setline(a:line + 1, '0123456789abcdef'[s:Min(s:DLev(a:line), s:DLev(a:line + 2))] . '>')
+  call s:AdjQuo(a:line + 1)
 endfunction
 
 function! s:DExtQuo(max) range
@@ -1807,11 +1956,12 @@ function! s:DExtQuo(max) range
   let l1 = 0
   let i  = a:lastline + 1
   let l2 = '0x' . getline(i)[0] + 0
-  while l2 <= a:max && l2 >= l1
+  while l2 <= a:max && l2 >= l1 && l2 <= (l1 + 1)
     let l1 = l2
     let i  = i - 1
     let l2 = '0x' . getline(i)[0] + 0
   endwhile
+  let i = i + (getline(i) =~ '\%>3v\S')
   exe 'sil ' . a:firstline . ',' . i . '-/\%3v\s*$\|\%' . (a:lastline + 1) . 'l/ d _'
 endfunction
 
@@ -1926,15 +2076,26 @@ function! s:WTop()
 endfunction
 
 function! s:Cr(form, mode, ...)
-  function! s:TrimQuote(count, form)
+  function! s:TrimQuote(maxLev, form, ...)
+    function! s:LongLine(top)
+      let n = a:top
+      while n < line("'t") && strlen(getline(n)) <= s:tw
+	let n = n + 1
+      endwhile
+      return n < line("'t")
+    endfunction
     norm! znjmt
     let top = s:QTop(line("'t") - 1, 1) + (getline('.') =~ '\%3v\s*$')
-    if a:count > 0
-      exe top . ",'t- call s:DExtQuo(v:count)"
+    if a:maxLev > 0
+      exe top . ",'t- call s:DExtQuo(a:maxLev)"
     endif
-    if a:form == 'wrapman'
+    if a:form == 'wrapman' || s:LongLine(top)
+      if a:0 == 0 || a:maxLev > 0 | call s:ConWin('update') | endif
       exe top . ",'t- call s:Scan()"
-    endif      
+    endif
+    if getline(top - 2) =~ '^\x>' && getline(top) =~ '^\x>'
+      call s:AdjQuo(top - 1)
+    endif
   endfunction
   exe (a:mode == 'n' ? 'norm! a·' : '')
   if getline('.') =~ '^1>'
@@ -1943,14 +2104,14 @@ function! s:Cr(form, mode, ...)
     sil s/\v^(..).{-}\zs\s*·\s*(.*)/\r\r\1\2/
     exe 'sil s/\v^%' . line('.') . 'l%(\x\>\s*$|\n)*//g 2'
     sil . g/./ put! =\"\n\n\"
-    call s:ConWin('update')
-    unlet! s:pageLine
     norm! ms
-    if (v:count > 0 || a:form == 'wrapman') && search('^\x>', 'bW') > 0
-      call s:TrimQuote(v:count, a:form)
+    if search('^\x>', 'bW') > 0
+      call s:TrimQuote((a:form == 'nowrap' && v:count == 0 ? 2 : v:count), a:form)
       norm! `s
     endif
-    call s:RestCur(winline())
+    call s:ConWin('update')
+    unlet! s:pageLine s:jpPage
+    sil! call s:RestCur(winline())
     call s:Setl('wrap')
     exe (&l:fen == 1 ? 'norm! zX' : '')
     let &so = s:so
@@ -1960,9 +2121,9 @@ function! s:Cr(form, mode, ...)
     norm! "_x
     start
   elseif a:0 == 0
-    exe 'sil s/\v^.{-}' . (s:format_flowed == 1 ? '\zs\s*' : '\zs') . '·(.*)/\r\1/'
+    exe 'sil s/\v^.{-}' . (s:format_flowed ? '\zs\s*' : '\zs') . '·(.*)/\r\1/'
     norm! 0
-    unlet! s:pageLine | set gcr&
+    unlet! s:pageLine s:jpPage | set gcr&
     call s:ConWin('update')
     start
   else
@@ -1971,7 +2132,7 @@ function! s:Cr(form, mode, ...)
     let start = (getline('.')[col('$') - 2] == '·' ? 'start!' : 'start')
     norm! "_xms
     if (v:count > 0 || a:form == 'wrapman') && search('^\x>', 'bW') > 0
-      call s:TrimQuote(v:count, a:form)
+      call s:TrimQuote(v:count, a:form, 'skipUpdate')
       norm! `s
     endif
     call s:RestCur(winline())
@@ -1984,7 +2145,7 @@ endfunction
 
 function! s:Do(...)
   if getline('.')[col('$') - 2] == '·'
-    norm! $"_x
+    exe 'norm! $"_x' . (&ve == 'all' ? 'h' : '')
     return (a:0 > 0 ? a:1 : '')
   else
     norm! h"_x
@@ -2033,6 +2194,7 @@ function! s:Undo()
     call s:ConWin('off')
     unlet! b:levMax | let s:changedName = 1
     let @w = '' | call s:SetTitle()
+    unlet! b:topPost
     match none | syn clear
     sil $ put v | sil 1,.- d _
     call s:Interface('correct')
@@ -2053,12 +2215,11 @@ function! s:Send(act)
           \let @v = "' . escape(@v, '\"') . '" | 
           \let @w = "' . escape(@w, '\"') . '" | 
           \call s:SetTitle() | 
-          \let &gfn = "' . &gfn . '" | 
-          \let &co = ' . winwidth(0) . ' | 
-          \let &lines = ' . &lines . ' | 
+          \ if has("gui_running") | let &gfn = "' . &gfn . '" | let &co = ' . winwidth(0) . ' | let &lines = ' . &lines . ' | endif | 
           \let s:so = ' . s:so . ' | 
           \let &so = ' . s:so . ' | 
           \let &l:wrap = ' . &l:wrap . ' | 
+	  \' . (exists("b:topPost") ? 'let b:topPost = 1 | ' : "") . '
           \match none | 
           \call s:SynHigh("' . stat{(exists("b:current_syntax") && b:current_syntax == 'posting_color')} . '") | 
           \call s:ConWin("' . stat{exists("s:authBuf")} . '") | 
@@ -2066,14 +2227,11 @@ function! s:Send(act)
           \call cursor(' . line('.') . ',' . col('.') . ') | 
           \call s:SetCur(' . winline() . ')'
       endif
-      sil $ put =\"\n\" . ' - Posting v1.3/' . time . ' -'
+      sil $ put =\"\n\" . ' - Posting v1.4/' . time . ' -'
     else
-      if s:Val('send', 'abort', '', 'yes') == 'abort' | return | endif
       sil! call s:DoFinForm(a:act, 'n')
       if search('^\~\~$', 'w') > 0 | .,$ d _ | endif
     endif
-  else
-    if s:Val('send', 'abort', '', 'yes') == 'abort' | return | endif
   endif
   call s:ConWin('off')
   exe substitute('uvwxyz', '.', 'let @\0 = "" | ', 'g')
@@ -2087,9 +2245,11 @@ function! s:Send(act)
   endif
 endfunction
 
+
 function! s:HlSet(grp, att)
-  let x = synIDattr(synIDtrans(hlID(a:grp)), a:att, 'gui')
-  return (x != '' ? ' gui' . a:att . '=' . x . ' ' : '')
+  let term = (s:gui ? 'gui' : 'cterm')
+  let x = synIDattr(synIDtrans(hlID(a:grp)), a:att, term)
+  return (x != '' && x != -1 ? ' ' . term . a:att . '=' . x . ' ' : '')
 endfunction
 
 function! s:SynHigh(act)
@@ -2098,8 +2258,6 @@ function! s:SynHigh(act)
     return s:HlSet(a:grp, 'fg') . s:HlSet(a:grp, 'bg')
   endfunction
   function! s:Color()
-    let id  = '<\?[^@<> \t]\+@[0-9A-Za-z-.]\+>\?'
-    let url = '<\?\%(http\|https\|ftp\):\/\/[0-9A-Za-z-.]\+\.\a\{2,4}>\?\%(\/\S*\)\?'
     syn match	postingReply		'^.*$' contains=postingFootnote,@Spell
     exe 'syn region postingHeader start="^\%<6l\%(' . s:validHeaders . '\) " end="^$"me=s-1 contains=postingSubject'
     syn match	postingSubject		'^Subject: \zs.*' contained
@@ -2109,21 +2267,13 @@ function! s:SynHigh(act)
     syn region	postingSectSpec		oneline start='{\@<=\%(FN\|TB\|BX\)' end='\\\@<! \|$' contained
     syn region	postingAnnotation	start='^\~\~$' end='\%$'
     syn match	postingQuotedA		display '^\x>.*$' contains=postingQuoted0,postingQuoted1,postingQuoted2,postingQuoted3,postingQuoted4
-    syn match	postingQuoted0		'\%<11l\_^0>.*$' contains=postingAttrib1,postingQuotesLocal contained
-    syn match	postingQuoted1		'^1>.*$' contains=postingQuotedLong,postingAttrib2,postingId1,postingURL1,postingQuotesLocal,,postingQuotedTab,postingTrailer contained
-    syn match	postingQuoted2		'^2>.*$' contains=postingQuotedLong,postingAttrib3,postingId2,postingURL2,postingQuotesLocal,postingQuotedTab,postingTrailer contained
-    syn match	postingQuoted3		'^3>.*$' contains=postingQuotedLong,postingAttrib4,postingId3,postingURL3,postingQuotesLocal,postingQuotedTab,postingTrailer contained
-    syn match	postingQuoted4		'^[456789abcdef]>.*$' contains=postingQuotedLong,postingAttrib4,postingId4,postingURL4,postingQuotesLocal,postingQuotedTab,postingTrailer contained
+    syn match	postingQuoted0		'^0>.*$' contains=postingAttrib1,postingQuotesLocal contained
+    syn match	postingQuoted1		'^1>.*$' contains=postingQuotedLong,postingAttrib2,postingQuotesLocal,,postingQuotedTab,postingTrailer contained
+    syn match	postingQuoted2		'^2>.*$' contains=postingQuotedLong,postingAttrib3,postingQuotesLocal,postingQuotedTab,postingTrailer contained
+    syn match	postingQuoted3		'^3>.*$' contains=postingQuotedLong,postingAttrib4,postingQuotesLocal,postingQuotedTab,postingTrailer contained
+    syn match	postingQuoted4		'^[456789abcdef]>.*$' contains=postingQuotedLong,postingAttrib4,postingQuotesLocal,postingQuotedTab,postingTrailer contained
     syn match	postingQuotesLocal	'^\x>' contained
     syn match	postingQuotedTab	'\%>2v\t' contained
-    exe 'syn match postingId1		"' . id . '" contained'
-    exe 'syn match postingId2		"' . id . '" contained'
-    exe 'syn match postingId3		"' . id . '" contained'
-    exe 'syn match postingId4		"' . id . '" contained'
-    exe 'syn match postingURL1		"' . url . '" contained'
-    exe 'syn match postingURL2		"' . url . '" contained'
-    exe 'syn match postingURL3		"' . url . '" contained'
-    exe 'syn match postingURL4		"' . url . '" contained'
     exe 'syn match postingAttrib1	"\%<' . (s:synRepLedMax + 1) . 'l\%3c.*•$" contains=postingAttribMark contained'
     exe 'syn match postingAttrib2	"\%<' . (s:synRepLedMax + 1) . 'l\%3c.*•$" contains=postingAttribMark contained'
     exe 'syn match postingAttrib3	"\%<' . (s:synRepLedMax + 1) . 'l\%3c.*•$" contains=postingAttribMark contained'
@@ -2131,7 +2281,7 @@ function! s:SynHigh(act)
     syn match	postingAttribMark	'•' contained
     syn region	postingTrailer		start='\%3c-- $' start='\%3cDISCLAIMER:' start='\%3c\*\{10,}.*[Cc]onfidential'  end='^\(..\).*\%(\n\1\@!\|\%$\)\@=' contains=postingQuotesLocal contained keepend
     syn match	postingQuotedB		display '^[ |].*$' contains=postingQuotedLong,postingFootnote
-    exe 'syn match postingQuotedLong	display ".\%>' . s:vcols1 . 'v" contained'
+    exe 'syn match postingQuotedLong	display ".\%>' . (s:tw + 1) . 'v" contained'
     syn sync minlines=20
     hi def link postingHeader		Type
     hi def link postingSubject		PreProc
@@ -2140,27 +2290,19 @@ function! s:SynHigh(act)
     hi def link postingQuoted3		Identifier
     hi def link postingQuoted4		Statement
     hi def link postingQuotes		Delimiter
-    exe 'hi postingQuotesLocal gui=inverse' . s:Col('postingQuotes')
+    exe 'hi postingQuotesLocal term=inverse cterm=inverse gui=inverse' . s:Col('postingQuotes')
     hi def link postingQuotedTab	Error
-    exe 'hi postingId1 gui=italic' . s:Col('postingQuoted1')
-    exe 'hi postingId2 gui=italic' . s:Col('postingQuoted2')
-    exe 'hi postingId3 gui=italic' . s:Col('postingQuoted3')
-    exe 'hi postingId4 gui=italic' . s:Col('postingQuoted4')
-    hi link postingURL1			postingId1
-    hi link postingURL2			postingId2
-    hi link postingURL3			postingId3
-    hi link postingURL4			postingId4
-    exe 'hi postingAttrib1 gui=underline' . s:Col('postingQuoted1')
-    exe 'hi postingAttrib2 gui=underline' . s:Col('postingQuoted2')
-    exe 'hi postingAttrib3 gui=underline' . s:Col('postingQuoted3')
-    exe 'hi postingAttrib4 gui=underline' . s:Col('postingQuoted4')
+    exe 'hi postingAttrib1 term=underline cterm=underline gui=underline' . s:Col('postingQuoted1')
+    exe 'hi postingAttrib2 term=underline cterm=underline gui=underline' . s:Col('postingQuoted2')
+    exe 'hi postingAttrib3 term=underline cterm=underline gui=underline' . s:Col('postingQuoted3')
+    exe 'hi postingAttrib4 term=underline cterm=underline gui=underline' . s:Col('postingQuoted4')
     hi link postingAttribMark		Ignore
     hi def link postingQuotedLong	Search
     hi def link postingSection		Special
     hi link postingFootnote		postingSection
     hi link postingTable		postingSection
     hi link postingBox			postingSection
-    exe 'hi postingSectSpec gui=bold' . s:Col('postingSection')
+    exe 'hi postingSectSpec term=bold cterm=bold gui=bold' . s:Col('postingSection')
     hi def link postingTrailer		Error
     hi def link postingAnnotation	Todo
   endfunction
@@ -2173,7 +2315,7 @@ function! s:SynHigh(act)
     hi link postingAttrib		Underlined
     hi link postingAttribMark		Ignore
     hi def link postingQuotes		Delimiter
-    exe 'hi postingQuotesLocal gui=inverse' . s:Col('postingQuotes')
+    exe 'hi postingQuotesLocal term=inverse cterm=inverse gui=inverse' . s:Col('postingQuotes')
   endfunction
   if a:act == 'on'
     if !exists("b:current_syntax") || b:current_syntax != 'posting_color'
@@ -2203,7 +2345,9 @@ function! s:Help(buf)
       exe s:SaveView()
       let s:helpRest = restView . ' | ' . start
       h posting-commands
-      nn <buffer> <silent> <M-h> :call <SID>Help('help')<Cr>
+      nn <buffer> <silent> <M-h>    :call <SID>Help('help')<Cr>
+      nn <buffer> <silent> <Tab>    /\v%(\*\n\s*)@<!\*\k+\*$<Cr>zt
+      nn <buffer> <silent> <S-Tab>  ?\v%(\*\n\s*)@<!\*\k+\*$<Cr>zt
     else
       exe 'bd ' . bufnr('posting.txt')
       let &so = s:so
@@ -2357,25 +2501,33 @@ function! s:Ce(mode) range
   endif
 endfunction
 
+function! s:Shortmess(text)
+  set gcr=n:block-Ignore
+  echohl ErrorMsg
+  echo a:text
+  echohl None
+  sleep 500m
+  echon "\r                    "
+  set gcr&
+endfunction
+
 function! s:Jump(dir)
-  exe (exists("s:jpPage") ? s:WTop() + &so : '')
+  if exists("s:jpPage") && a:dir == 'down'
+    call cursor(s:WTop() + &so, 1)
+  elseif exists("s:jpPage") && a:dir == 'up'
+    call cursor(s:WTop() + winheight(0) - 1 - &so, 100)
+  endif
   if search('\v%(\_^1\>%(\s*\|)@!.*)@<=%(%(\a\a|\)|\.\.|' . "'" . '|")@<=[.!?]\s|[.!?]$|%([.!?][' . "'" . '")]?)@<=[")]|[^•]%(\n\x\>\s*\_$|%$)@=)', (a:dir == 'up' ? 'Wb' : 'W')) > 0
     let s:jpMatch = 1
     unlet! s:pageLine | set gcr&
   else
-    set gcr=n:block-Ignore
-    echohl ErrorMsg
     if exists("s:jpMatch") && a:dir == 'up'
-      echo 'top'
+      call s:Shortmess('top')
     elseif exists("s:jpMatch")
-      echo 'bottom'
+      call s:Shortmess('bottom')
     else
-      echo 'no match'
+      call s:Shortmess('no match')
     endif
-    echohl None
-    sleep 500m
-    echon "\r        "
-    set gcr&
   endif
   unlet! s:jpPage
 endfunction
@@ -2394,10 +2546,9 @@ function! s:Tab(dir, ...)
   exe restSett
 endfunction
 
-
 function! s:Bar()
   if getline('.') =~ '^\x>'
-    norm! 2|r>lg$
+    exe 'norm! 2|r>l' . winwidth(0) . '|'
   endif
 endfunction
 
@@ -2406,14 +2557,20 @@ function! s:Grab()
   sil! . v/\%>2v\S/ norm! j
 endfunction
 
+function! s:Drop()
+  norm! gv
+  sil! . v/\%>2v\S/ norm! k
+endfunction
+
 function! s:Zoom(dir)
-  let fonts = 'Courier_New'
+  let fonts = 'Courier_New\|Lucida_Console'
   function! s:Size(type, ...)
     let Courier_New = '10/56 12/50 14/42 16/40 18/34'
+    let Lucida_Console = '10/60 12/50 14/42 16/38 18/34'
     return matchstr({s:f}, (a:type == 'lines' ? a:1 . '/\zs\d*' : 
 			  \(a:type == 'h_min' ? '^\d*' : '\d*\%(/\S*$\)\@=')))
   endfunction
-  if &gfn =~ fonts
+  if s:gui && &gfn =~ fonts
     let s:f   = matchstr(&gfn, '^.\{-}:\@=')
     let h     = matchstr(&gfn, ':h\zs\d\+')
     let h_min = s:Size('h_min')
@@ -2522,9 +2679,21 @@ function! s:InvWrap()
 endfunction
 
 function! s:ManPaste(...)
+  if @* =~ "^\n\\?$"
+    call s:Do()
+    call s:Shortmess('clipboard empty')
+    return
+  endif
   let ch = (a:0 == 0 ? getchar() : char2nr(a:1))
   if ch == 32
     exe 'norm! ' . s:Do('"*gp', '"*gP')
+  elseif ch == 102
+    exe s:SaveSett('ve')
+    setl ve=
+    exe 'norm! ' . s:Do('a', 'i') . '{FN' . s:Val('wrap', '/1', '') . ' ' . @* . '}'
+    setl ve=all
+    norm! l
+    exe restSett
   else
     call s:Do()
     if ch == 105
@@ -2535,11 +2704,12 @@ function! s:ManPaste(...)
       call s:Paste('*', 'nowrap')
     elseif ch == 17
       call s:Paste('*', 'wrap_dot')
-    elseif ch == 98
+    elseif ch == 116 || ch == 98
       .- ma z
       call s:Paste('*', 'nowrap', 0)
       norm! kV'z+
-      call s:ManInsert('v', 'b')
+      call s:ManInsert('v', (ch == 116 ? 't' : 'b'))
+      norm! 2j
     endif
   endif
   call s:ConWin('update')
@@ -2574,16 +2744,26 @@ function! s:Requote()
 endfunction
 
 function! s:Scroll(dir, lin)
-  exe s:SaveSett('sc', 'smd')
-  set nosc nosmd
-  let i = 0
-  while i < a:lin
-    exe 'norm! ' . (a:dir == 'up' ? '' : '')
-    syncbind
-    redraw
-    let i = i + 1
-  endwhile
-  exe restSett
+  if s:gui && &l:wrap == 0
+    exe s:SaveSett('sc', 'smd')
+    set nosc nosmd
+    let i = 0
+    while i < a:lin
+      exe 'norm! ' . (a:dir == 'up' ? '' : '')
+      syncbind
+      redraw
+      let i = i + 1
+    endwhile
+    exe restSett
+  else
+    exe 'norm! ' . a:lin . (a:dir == 'up' ? '' : '')
+  endif
+endfunction
+
+function! s:PageReset()
+  sil! exe s:pageRest
+  unlet! s:pageLine s:pageRest
+  set gcr&
 endfunction
 
 function! s:Page(dir, ...)
@@ -2595,15 +2775,12 @@ function! s:Page(dir, ...)
   call s:Scroll(a:dir, winheight(0) / (a:0 > 0 ? 4 : 1))
   let wtop = s:WTop()
   if s:pageLine >= (wtop + &so) && s:pageLine < (wtop + winheight(0) - &so)
-    exe s:pageRest
-    unlet s:pageLine s:pageRest
-    set gcr&
+    call s:PageReset()
   else
     let &gcr = 'n-v-c:block-Cursor/lCursor,ve:ver35-Cursor,o:hor50-Cursor,i:ver25-Cursor/lCursor-blinkon0,ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor,sm:block-Cursor-blinkwait175-blinkoff150-blinkon175'
   endif
   let s:jpPage = 1
 endfunction
-
 
 function! s:Reply(dir)
   exe s:SaveSett('so', 'ws')
@@ -2622,6 +2799,7 @@ function! s:Reply(dir)
   endif
   norm! `z
   exe restSett
+  call s:PageReset()
 endfunction
 
 function! s:Invert(...)
@@ -2660,6 +2838,7 @@ function! s:Invert(...)
   else
     exe s:restTopView | unlet s:restTopView
   endif
+  call s:Top()
   unlet! b:levMax | let s:changedName = 1 | call s:ConWin('update')
   call s:SetTitle()
   setl smd sc
@@ -2678,22 +2857,26 @@ function! s:Number(mode) range
   exe top . ',' . bot . ' s/\%' . (a:mode == 'v' ? col("'<") : 1) . 'c/\=s:N(line(".") - ' . (top - 1) . ') . " "/'
 endfunction
 
+function! s:InitTopPost()
+  call s:ConWin('off')
+  sil! call s:Attrib('UNMARK')
+  exe 'norm! gg' . (exists('s:header') ? '}+' : '')
+  put! =\"\n\n\"
+  let b:topPost = 1
+endfunction
+
 function! s:Interface(mode)
   function! s:Wipe()
     unmenu    Posting
     unmenu!   Posting
     mapclear  <buffer>
     mapclear! <buffer>
-    nmapclear <buffer>
-    vmapclear <buffer>
-    imapclear <buffer>
-    omapclear <buffer>
     nunmap    <M-h>
     iunmap    <M-h>
   endfunction
   sil! call s:Wipe()
   if a:mode == 'correct'
-    if s:guiSup
+    if s:gui
       anoremenu <silent> &Posting.Re&quote<Tab>,q   :call <SID>Requote()<Cr>
       anoremenu <silent> &Posting.Re&move<Tab>,m    vy:exe '%s/' . escape(@", '/$.') . '/ /ge'<Cr>
       anoremenu <silent> &Posting.&Cut\ off<Tab>,c  :sil g/^\%(> *\)\{16,}/d<Cr>
@@ -2715,7 +2898,7 @@ function! s:Interface(mode)
     ino	<buffer> <silent> <M-z>			    <C-O>:call <SID>Send('asis')<Cr>
     let b:stlBufStat = 'R--'
   elseif a:mode == 'compose'
-    if s:guiSup
+    if s:gui
       anoremenu	  <silent> &Posting.&Display.&Help\ on/off<Tab>Alt+H	:call <SID>MHelp()<Cr>
       anoremenu	  <silent> &Posting.&Display.&Wrap\ on/off<Tab>Alt+W	:call <SID>InvWrap()<Cr>
       anoremenu	  <silent> &Posting.&Display.&Virtual\ on/off<Tab>Alt+E	:exe 'setl ve=' . (&l:ve != 'all' ? 'all' : '')<Cr>
@@ -2728,20 +2911,24 @@ function! s:Interface(mode)
       anoremenu	  <silent> &Posting.&Display.&Syntax\ on/off<Tab>Alt+Y	:call <SID>SynHigh('toggle')<Cr>
       anoremenu	  <silent> &Posting.&Display.&Context\ on/off<Tab>Alt+X	:call <SID>ConWin('toggle')<Cr>
       anoremenu	  <silent> &Posting.&Quoting.&Clean<Tab>Alt+L		:call <SID>Clean('restView')<Cr>
-      anoremenu	  <silent> &Posting.&Quoting.&Retab<Tab>Alt+T		:call <SID>Retab()<Cr>
+      anoremenu	  <silent> &Posting.&Quoting.&Retab<Tab>Alt+B		:call <SID>Retab()<Cr>
       anoremenu	  <silent> &Posting.&Quoting.&Unplenk<Tab>Alt+K		:sil! call <SID>Unplenk()<Cr>
       anoremenu	  <silent> &Posting.&Quoting.&Invert<Tab>Alt+I		:sil! call <SID>Invert()<Cr>
+      anoremenu	  <silent> &Posting.&Quoting.&Top-post!<Tab>Alt+T	:call <SID>InitTopPost()<Cr>
       anoremenu	  <silent> &Posting.&Quoting.&Dismiss<Tab>Alt+U		:call <SID>Undo()<Cr>
       menu	  Posting.Quoting.-Sep1- :
       nnoremenu	  <silent> &Posting.&Quoting.&Abridge<Tab>Alt+A		:call <SID>Abridge('nowrap', 'n', v:count)<Cr>
-      inoremenu	  <silent> &Posting.&Quoting.&Scan<Tab>Ctrl+Cr		<C-K>.M<Esc>:<C-U>call <SID>Cr('wrapman', 'i', 'scan')<Cr>
+      inoremenu	  <silent> &Posting.&Quoting.&Scan<Tab>Ctrl+<Cr>	<C-K>.M<Esc>:<C-U>call <SID>Cr('wrapman', 'i', 'scan')<Cr>
       menu	  Posting.-Sep1- :
-      inoremenu	  <silent> &Posting.&Paste.&Indented<Tab>Ctrl+P\ i	<C-K>.M<C-O>:call <SID>ManPaste('i')<Cr>
-      inoremenu	  <silent> &Posting.&Paste.&Quoted<Tab>Ctrl+P\ q	<C-K>.M<C-O>:call <SID>ManPaste('q')<Cr>
-      inoremenu	  <silent> &Posting.&Paste.&Boxed<Tab>Ctrl+P\ b		<C-K>.M<C-O>:call <SID>ManPaste('b')<Cr>
-      inoremenu	  <silent> &Posting.S&ections.&Footnote<Tab>Ctrl+S\ f	<C-K>.M<C-O>:call <SID>ManInsert('i', 'f')<Cr>
-      inoremenu	  <silent> &Posting.S&ections.&Table<Tab>Ctrl+S\ t	<C-K>.M<C-O>:call <SID>ManInsert('i', 't')<Cr>
-      inoremenu	  <silent> &Posting.S&ections.&Box<Tab>Ctrl+S\ b	<C-K>.M<C-O>:call <SID>ManInsert('i', 'b')<Cr>
+      inoremenu	  <silent> &Posting.S&ections.&Footnote<Tab>Ctrl+S\ F	<C-K>.M<C-O>:call <SID>ManInsert('i', 'f')<Cr>
+      inoremenu	  <silent> &Posting.S&ections.&Table<Tab>Ctrl+S\ T	<C-K>.M<C-O>:call <SID>ManInsert('i', 't')<Cr>
+      inoremenu	  <silent> &Posting.S&ections.&Box<Tab>Ctrl+S\ B	<C-K>.M<C-O>:call <SID>ManInsert('i', 'b')<Cr>
+      inoremenu	  <silent> &Posting.&Paste.&Footnoted<Tab>Ctrl+P\ F	<C-K>.M<C-O>:call <SID>ManPaste('f')<Cr>
+      inoremenu	  <silent> &Posting.&Paste.&Tabled<Tab>Ctrl+P\ T	<C-K>.M<C-O>:call <SID>ManPaste('t')<Cr>
+      inoremenu	  <silent> &Posting.&Paste.&Boxed<Tab>Ctrl+P\ B		<C-K>.M<C-O>:call <SID>ManPaste('b')<Cr>
+      menu	  Posting.Paste.-Sep1- :
+      inoremenu	  <silent> &Posting.&Paste.&Indented<Tab>Ctrl+P\ I	<C-K>.M<C-O>:call <SID>ManPaste('i')<Cr>
+      inoremenu	  <silent> &Posting.&Paste.&Quoted<Tab>Ctrl+P\ Q	<C-K>.M<C-O>:call <SID>ManPaste('q')<Cr>
       inoremenu	  <silent> &Posting.&Center<Tab>Alt+C			<C-O>:call <SID>Ce('n')<Cr>
       vnoremenu	  <silent> &Posting.&Center<Tab>Alt+C			:call <SID>Ce('v')<Cr>
       inoremenu	  <silent> &Posting.&Number<Tab>Alt+N			<C-O>:call <SID>Number('n')<Cr>
@@ -2765,15 +2952,18 @@ function! s:Interface(mode)
       tm &Posting.&Quoting.&Retab					Use this to replace/resize tab's
       tm &Posting.&Quoting.&Unplenk					Corrects Plenking
       tm &Posting.&Quoting.&Invert					Changes quoting style from top- to bottom-posting
+      tm &Posting.&Quoting.&Top-post!					Generate top-posting style message
       tm &Posting.&Quoting.&Dismiss					Use this to undo :Post
       tm &Posting.&Quoting.&Abridge					Cut off levels greater than [count]
       tm &Posting.&Quoting.&Scan					Splits quotation and turns on Scan mode
-      tm &Posting.&Paste.&Indented		    			Shifts to the right
-      tm &Posting.&Paste.&Quoted		    			Prepends "\| "
-      tm &Posting.&Paste.&Boxed						Encloses in frame section
       tm &Posting.S&ections.&Footnote		    			Will be appended
       tm &Posting.S&ections.&Table		    			Text inside won't change
       tm &Posting.S&ections.&Box			    		Will be surrounded by a frame
+      tm &Posting.&Paste.&Footnoted		    			Encloses in Footnote section
+      tm &Posting.&Paste.&Tabled		    			Encloses in Table section
+      tm &Posting.&Paste.&Boxed						Encloses in Frame section
+      tm &Posting.&Paste.&Indented		    			Shifts to the right
+      tm &Posting.&Paste.&Quoted		    			Prepends "\| "
       tm &Posting.&Center						Centers area/paragraph
       tm &Posting.&Number						Numbers lines within area/paragraph
       tm &Posting.&Justify			    			Adjusts line length and corrects bad quoting markup
@@ -2793,7 +2983,7 @@ function! s:Interface(mode)
     ino	  <buffer> <silent> <M-y>		    <C-O>:call <SID>SynHigh('toggle')<Cr>
     ino	  <buffer> <silent> <M-x>		    <C-O>:call <SID>ConWin('toggle')<Cr>
     ino	  <buffer> <silent> <M-LeftMouse>	    <Esc><LeftMouse>:sil! call <SID>AEdit('mark', 'update')<Cr>i
-    ino	  <buffer> <silent> <M-C-LeftMouse>	    <Esc><LeftMouse>:sil! call <SID>AEdit('force', 'update')<Cr>i
+    ino	  <buffer> <silent> <C-LeftMouse>	    <Esc><LeftMouse>:sil! call <SID>AEdit('force', 'update')<Cr>i
     ino	  <buffer> <silent> <M-RightMouse>	    <Esc><LeftMouse>:sil! call <SID>DSep(line('.'))<Cr>:call <SID>ConWin('update')<Cr>i
     ino	  <buffer> <silent> <C-RightMouse>	    <Esc><LeftMouse>dd:call <SID>ConWin('update')<Cr>i
     ino	  <buffer> <silent> #			    <C-O>:sil! call <SID>ManAEdit()<Cr>
@@ -2802,10 +2992,11 @@ function! s:Interface(mode)
     ino	  <buffer> <silent> <C-Tab>		    <C-K>.M<Esc>:call <SID>Tab('down', 'jump')<Cr>
     ino	  <buffer> <silent> <S-Tab>		    <C-K>.M<Esc>:call <SID>Tab('up', 'jump')<Cr>
     ino	  <buffer> <silent> <M-l>		    <C-O>:call <SID>Clean('restView')<Cr>
-    ino	  <buffer> <silent> <M-t>		    <C-O>:call <SID>Retab()<Cr>
+    ino	  <buffer> <silent> <M-b>		    <C-O>:call <SID>Retab()<Cr>
     ino	  <buffer> <silent> <M-k>		    <C-O>:sil! call <SID>Unplenk()<Cr>
     ino	  <buffer> <silent> <M-i>		    <C-O>:sil! call <SID>Invert()<Cr>
     ino	  <buffer> <silent> <S-M-i>		    <C-O>:sil! call <SID>Invert('skipAttProc')<Cr>
+    ino	  <buffer> <silent> <M-t>		    <C-O>:call <SID>InitTopPost()<Cr>
     ino	  <buffer> <silent> <M-u>		    <Esc>:call <SID>Undo()<Cr>
     nn	  <buffer> <silent> <M-u>		    :call <SID>Undo()<Cr>
     vn	  <buffer> <silent> <M-a>		    :call <SID>Abridge('nowrap', 'v', v:count)<Cr>
@@ -2813,13 +3004,15 @@ function! s:Interface(mode)
     vn	  <buffer> <silent> <S-M-a>		    :call <SID>Abridge('wrap', 'v', v:count)<Cr>
     nn	  <buffer> <silent> <S-M-a>		    :call <SID>Abridge('wrap', 'n', v:count)<Cr>
     ino	  <buffer> <silent> <Cr>		    <C-K>.M<Esc>:<C-U>call <SID>Cr('nowrap', 'i')<Cr>
-    ino	  <buffer> <silent> <C-Cr>		    <C-K>.M<Esc>:<C-U>call <SID>Cr('wrapman', 'i', 'scan')<Cr>
     nn	  <buffer> <silent> <Cr>		    :<C-U>call <SID>Cr('nowrap', 'n')<Cr>
+    ino	  <buffer> <silent> <C-Cr>		    <C-K>.M<Esc>:<C-U>call <SID>Cr('wrapman', 'i', 'scan')<Cr>
     nn	  <buffer> <silent> <C-Cr>		    :<C-U>call <SID>Cr('wrapman', 'n', 'scan')<Cr>
-    vn	  <buffer> <silent> <C-y>		    "*y
-    ino	  <buffer> <silent> <C-p>		    <C-K>.M<C-O>:call <SID>ManPaste()<Cr>
+    ino	  <buffer> <silent> <M-f>		    <C-K>.M<Esc>:<C-U>call <SID>Cr('wrapman', 'i', 'scan')<Cr>
+    nn	  <buffer> <silent> <M-f>		    :<C-U>call <SID>Cr('wrapman', 'n', 'scan')<Cr>
     ino	  <buffer> <silent> <C-s>		    <C-K>.M<C-O>:call <SID>ManInsert('i')<Cr>
     vn	  <buffer> <silent> <C-s>		    :call <SID>ManInsert('v')<Cr>
+    vn	  <buffer> <silent> <C-y>		    "*y
+    ino	  <buffer> <silent> <C-p>		    <C-K>.M<C-O>:call <SID>ManPaste()<Cr>
     ino	  <buffer> <silent> <M-c>		    <C-O>:call <SID>Ce('n')<Cr>
     vn	  <buffer> <silent> <M-c>		    :call <SID>Ce('v')<Cr>
     ino	  <buffer> <silent> <M-n>		    <C-O>:call <SID>Number('n')<Cr>
@@ -2861,18 +3054,23 @@ function! s:Interface(mode)
     nn	  <buffer> <silent> ,qj			    j:sil! . v/\%>2v\S/+<Cr>
     nn	  <buffer> <silent> ,qk			    k:sil! . v/\%>2v\S/-<Cr>
     vn	  <buffer> <silent> ,qj			    j<Esc>:call <SID>Grab()<Cr>
+    vn	  <buffer> <silent> ,qk			    k<Esc>:call <SID>Drop()<Cr>
     let b:stlBufStat = '-C-'
   else
-    if s:guiSup
+    if s:gui
       anoremenu	  <silent> &Posting.&Restore<Tab>Alt+P	:sil! call <SID>Undo()<Cr>
-      anoremenu	  <silent> &Posting.&Send!<Tab>Alt+Z	:call <SID>Send('asis')<Cr>
+      anoremenu	  <silent> &Posting.&Send!<Tab><Cr>	:call <SID>Send('asis')<Cr>
       tm Posting.&Restore			    Use this to correct typos...
       tm &Posting.&Send!			    Save and exit
     endif
     nn	  <buffer> <silent> <M-p>		    :sil! call <SID>Undo()<Cr>
     ino	  <buffer> <silent> <M-p>		    <Esc>:sil! call <SID>Undo()<Cr>
-    nn	  <buffer> <silent> <M-z>		    :call <SID>Send('asis')<Cr>
-    ino	  <buffer> <silent> <M-z>		    <C-O>:call <SID>Send('asis')<Cr>
+    nn	  <buffer> <silent> <Cr>		    :call <SID>Send('asis')<Cr>
+    ino	  <buffer> <silent> <Cr>		    <C-O>:call <SID>Send('asis')<Cr>
+    if s:format_flowed
+      vn  <buffer> <silent> f			    :s/ *$/ /e<Cr>:s/ *$//e<Cr>
+      vn  <buffer> <silent> <Space>		    :s/ *$//e<Cr>
+    endif
     let b:stlBufStat = '--P'
   endif
 endfunction
@@ -2983,8 +3181,8 @@ function! s:DoFinForm(form, mode)
     exe 'sil! ' . a:firstline . ',' . a:lastline . ' g/^\(.\).*\n\1\@!./ put _'
   endfunction
   function! s:SpaceStuff() range
-    if s:format_flowed == 1
-      exe a:firstline . '+,' . a:lastline . '- call s:Shft(1)'
+    if s:format_flowed
+      exe a:firstline . '+,' . a:lastline . '- call s:Freeze()'
     endif
   endfunction
   function! s:ProcSec(type, action)
@@ -3007,19 +3205,23 @@ function! s:DoFinForm(form, mode)
     while search('^\x>', 'Wb') > 0
       put _ | ma b
       ?\v^%(\x\>)@!? ma a
-      'a+,'b- call s:DExtQuo(v:count > 0 ? v:count : 15)
+      if !exists("b:topPost")
+	'a+,'b- call s:DExtQuo(v:count > 0 ? v:count : 15)
+      else
+	'a+
+      endif
       if getline('.') !~ '^\x>' | continue | endif
       let maxLev = s:Max('0x' . getline('.')[0] + 0, maxLev)
       if a:form == 'wrap'
         'a+,'b- call s:GQ('quo', 'tqn1')
       endif
-      if s:format_flowed == 1
-        'a+,'b- s/ *$/ /
-        'a+,'b g/\v^%(..\s*)?$/ .-,. s/ $//
-      endif
       'a
     endwhile
     call s:Attrib('restore', maxLev - 1)
+    % call s:Digiquote('off')
+    if s:format_flowed
+      g/^[> ]*$/ .-,. s/ *$//
+    endif
   endfunction
   let s:restore = '
     \let s:repLedMax = ' . s:repLedMax . ' | 
@@ -3034,20 +3236,21 @@ function! s:DoFinForm(form, mode)
   unlet! s:fold | setl nosmd nosc fdm& nofen
   %y z
   call s:Frame('save')
-  $ put _ | ?\v^%(\x\>)@!.*\S.*•@<!$?+,$ d _
+  $ put _ | ?\v^%(\x\>)@!.*\S.*•@<!$?+,$ d r
   1 put! _
   call s:AppFootSec()
   call s:ProcSec('TB', 's:SpaceStuff()')
   call s:ProcSec('BX', 's:MakeBox()')
   if !exists("b:stlManFmt")
-    if s:format_flowed == 1
+    if s:format_flowed
+      % s/^ \+$//
       % s/\v^( .{-}) *$/+ \1/
     else
-      % s/^ \@=/+/
+      % s/^ /+ /
     endif
   endif
+  if exists('b:topPost') | $ put r | endif
   call s:DRefQuoFin(a:form)
-  % call s:Digiquote('off')
   % s/^[>|@+]\@!/\*/
   % call s:SepLines()
   if !exists("b:stlManFmt")
@@ -3071,7 +3274,12 @@ function! s:DoFinForm(form, mode)
   setl nowrap
   call s:ConWin('off')
   syn clear | unlet! b:current_syntax
-  exe 'match Search /.\%>' . s:vcols2 . 'v/'
+  exe 'syn match postingQuotedLong display ".\%>' . (s:tw + 1) . 'v"'
+  hi def link postingQuotedLong Search
+  if s:format_flowed
+    hi def link postingFlowed Type
+    match postingFlowed /^.* $\|\%( \n\)\@<=\_^.*/
+  endif
   norm! gg
   setl smd sc
 endfunction
@@ -3085,12 +3293,12 @@ function! s:InitPost(columns, remote)
   endfunction
   function! s:Prepare(type)
     sil %y v | let @w = ''
-    let &lines = (s:cols * s:window_geometry) / 200
+    if s:gui | let &lines = (s:cols * s:window_geometry) / 200 | endif
     let s:so = winheight(0) / 10
     let &so = s:so
     if a:type == 'new'
       call s:SetTitle('[New]')
-      let &co = s:cols
+      if s:gui | let &co = s:cols | endif
       setl wrap
       call s:SynHigh(s:display_mode_on_startup =~? 'color' ? 'on' : 'off')
       call s:Top()
@@ -3105,7 +3313,7 @@ function! s:InitPost(columns, remote)
       else
       	call s:SetTitle('[Postponed]')
       endif
-      let &co = s:Columns()
+      if s:gui | let &co = s:Columns() | endif
       setl nowrap
       call s:SynHigh(s:display_mode_on_startup =~? 'color' ? 'on' : 'off')
       if s:display_mode_on_startup =~? 'context'
@@ -3116,21 +3324,13 @@ function! s:InitPost(columns, remote)
       endif
       call s:Top()
     endif
-    if !s:server | start | endif
+    start
   endfunction
   if exists("s:window_position")
     exe 'winpos ' . matchstr(s:window_position, '^\d\+') . ' ' . matchstr(s:window_position, '\d\+$')
   endif
   let s:cols = a:columns
-  if s:format_flowed == 0
-    let s:tw	 = s:cols
-    let s:vcols1 = s:cols + 1
-    let s:vcols2 = s:cols + 1
-  else
-    let s:tw     = s:cols - 1
-    let s:vcols1 = s:cols
-    let s:vcols2 = s:cols + 1
-  endif
+  let s:tw = s:cols
   let s:repLedMax = s:attribLineMax
   let s:changedName = 1
   let s:server = (a:remote == '!' ? 1 : 0)
@@ -3152,6 +3352,7 @@ function! s:InitPost(columns, remote)
   set siso=0
   setl dy=lastline
   setl lcs= nolist
+  setl fo-=t
   setl com=fb:-,fb:*,b:\|
   setl ai
   setl et
@@ -3171,6 +3372,7 @@ function! s:InitPost(columns, remote)
   setl wak=no
   setl nofen
   setl km= sel=inclusive
+  dig .M 183
   exe 'hi postingVisChar gui=reverse,italic' . s:HlSet('Visual', 'fg') . s:HlSet('Visual', 'bg')
   call s:Interface('compose')
   match None
@@ -3191,15 +3393,15 @@ function! s:InitPost(columns, remote)
   setl ul=1000
 endfunction
 
-command! -nargs=1 -bang Post :call s:InitPost(<args>, "<bang>")
+command! -bar -nargs=1 -bang Post :call s:InitPost(<args>, "<bang>")
 
 sil! call s:InstDoc()
 
 if exists("s:helpDoc")
-  echo "Posting v1.3: Installed help-documentation."
+  echo "Posting v1.4: Installed help-documentation."
 endif
 
 let &cpo = s:cpo
 
 " }}}1
-" vim600:co=74:fo=crq12:com=n\:\":tw=74:nojs:so=5:siso=15:nowrap:inde=:sts=2:sm:fdm=marker:
+" vim600:fo=crq12:com=n\:\":tw=74:nojs:so=5:siso=15:nowrap:inde=:sts=2:sm:fdm=marker:
